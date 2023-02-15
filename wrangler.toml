@@ -1,0 +1,7 @@
+name = "shorten"
+main = "src/index.ts"
+compatibility_date = "2023-02-15"
+[[ d1_databases ]]
+binding = "url"
+database_name = "short_url"
+database_id = "1a1d5e0c-8fab-4608-a653-1c7c6cdd6a28"
