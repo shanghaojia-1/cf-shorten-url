@@ -69,9 +69,12 @@ export default {
 			}
 		}else{
 			const hash=pathname.substring(1);
-			const { results } = await env.url.prepare(
+			const { results } :any= await env.url.prepare(
 				"SELECT * FROM urls WHERE hash=?"
 			  ).bind(hash).all();
+			  if(results==null){
+				  return new Response("404");
+			  }
 			  if(results.length==0){
 				  return new Response("404");
 			  }else{
