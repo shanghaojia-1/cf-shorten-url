@@ -52,34 +52,56 @@ async function checkURL(URL: string) {
 	}
 }
 
+
+
 export default {
 	async fetch(request: Request, env: Env) {
 		const { pathname } = new URL(request.url);
-		if(pathname=='/shorten'){
-			const url=await request.text();
-			if(await checkURL(url)){
-				let hash=await randomString();
-				await env.url.prepare(
-					"INSERT INTO urls VALUES (?,?)"
-				  ).bind(hash,url).run();
-				return new Response(hash);
+		if (pathname == '/api/shorten') {
+			const url = await request.text();
+			if (await checkURL(url)) {
+				let hash = await randomString();
+				try {
+					//判断url是否存在
+					const { results }: any = await env.url.prepare(
+						"SELECT * FROM urls WHERE url=?"
+					).bind(url).all();
+					if (results != null && results != undefined && results.length != 0) {
+						const res = { data: results[0].hash, msg: 'success' }
+						return Response.json(res);
+					}
+					await env.url.prepare(
+						"INSERT INTO urls VALUES (?,?)"
+					).bind(hash, url).run();
+					const res = { data: hash, msg: 'success' }
+					return Response.json(res);
+				} catch (e: any) {
+					const res = { data: null, msg: 'success' }
+					return Response.json(res);
+				}
+
 			}
-			else{
-				return new Response('你这url有问题啊');
+			else {
+				const res = { data: null, msg: '你这url有问题啊' }
+				return Response.json(res);
 			}
-		}else{
-			const hash=pathname.substring(1);
-			const { results } :any= await env.url.prepare(
-				"SELECT * FROM urls WHERE hash=?"
-			  ).bind(hash).all();
-			  if(results==null){
-				  return new Response("404");
-			  }
-			  if(results.length==0){
-				  return new Response("404");
-			  }else{
-				  return Response.redirect(results[0].url);
-			  }
+		} else {
+			const hash = pathname.substring(1);
+			try {
+				const { results }: any = await env.url.prepare(
+					"SELECT * FROM urls WHERE hash=?"
+				).bind(hash).all();
+				if (results == null || results == undefined || results.length == 0) {
+					const res = { data: null, msg: '红豆泥私密马赛，没找到' }
+					return Response.json(res);
+				} else {
+					return Response.redirect(results[0].url);
+				}
+			} catch (e: any) {
+				const res = { data: null, msg: '红豆泥私密马赛，出错了' }
+				return Response.json(res);
+			}
+
 		}
 
 	}
