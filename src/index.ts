@@ -67,22 +67,22 @@ export default {
 						"SELECT * FROM urls WHERE url=?"
 					).bind(url).all();
 					if (results != null && results != undefined && results.length != 0) {
-						const res = { data: results[0].hash, msg: 'success' }
+						const res = { code: 0, data: results[0].hash, msg: 'success' }
 						return Response.json(res);
 					}
 					await env.url.prepare(
 						"INSERT INTO urls VALUES (?,?)"
 					).bind(hash, url).run();
-					const res = { data: hash, msg: 'success' }
+					const res = { code: 0, data: hash, msg: 'success' }
 					return Response.json(res);
 				} catch (e: any) {
-					const res = { data: null, msg: 'success' }
+					const res = { code: -1, data: null, msg: '红豆泥私密马赛，出错了' }
 					return Response.json(res);
 				}
 
 			}
 			else {
-				const res = { data: null, msg: '你这url有问题啊' }
+				const res = { code: -2, data: null, msg: '你这url有问题啊' }
 				return Response.json(res);
 			}
 		} else {
@@ -92,13 +92,13 @@ export default {
 					"SELECT * FROM urls WHERE hash=?"
 				).bind(hash).all();
 				if (results == null || results == undefined || results.length == 0) {
-					const res = { data: null, msg: '红豆泥私密马赛，没找到' }
+					const res = { code: -2, data: null, msg: '红豆泥私密马赛，没找到' }
 					return Response.json(res);
 				} else {
 					return Response.redirect(results[0].url);
 				}
 			} catch (e: any) {
-				const res = { data: null, msg: '红豆泥私密马赛，出错了' }
+				const res = { code: -1, data: null, msg: '红豆泥私密马赛，出错了' }
 				return Response.json(res);
 			}
 

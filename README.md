@@ -22,6 +22,6 @@
 
 | url               | body              | response                               |
 | :---------------- | ----------------- | -------------------------------------- |
-| POST /api/shorten | https://baidu.com | { "data": "ijShd4", "msg": "success" } |
+| POST /api/shorten | https://baidu.com | {"code":0, "data": "ijShd4", "msg": "success" } |
 | GET /ijShd4       |                   | 301 redirect                           |
 
